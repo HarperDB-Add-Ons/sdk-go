@@ -1,13 +1,11 @@
 package harperdb
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestSystemStatus(t *testing.T) {
-	guest := "guest"
-
-	// delete guest user and role
-	_ = c.DropRole(guest)
-	_ = c.DropUser(guest)
+	guest := randomID()
 
 	// try with standard super user
 	_, err := c.SystemInformation()
@@ -23,17 +21,15 @@ func TestSystemStatus(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer c.DropRole(role.ID)
 
-	err = c.AddUser(guest, guest, role.ID, true)
+	err = c.AddUser(guest, guest, role.Role, true)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer func() {
-		_ = c.DropUser(guest)
-		_ = c.DropRole(role.ID)
-	}()
+	defer c.DropUser(guest)
 
-	guestClient := NewClient("http://localhost:9925", guest, guest)
+	guestClient := NewClient(DEFAULT_ENDPOINT, guest, guest)
 	_, err = guestClient.SystemInformation()
 	if e, ok := err.(*OperationError); ok && e.IsNotAuthorizedError() {
 		return

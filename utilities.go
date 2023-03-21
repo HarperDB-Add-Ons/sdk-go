@@ -43,7 +43,7 @@ type SysInfo struct {
 	} `json:"system"`
 	Time struct {
 		Current      Timestamp `json:"current"`
-		Uptime       int64     `json:"uptime"`
+		Uptime       float64   `json:"uptime"`
 		Timezone     string    `json:"timezone"`
 		TimezoneName string    `json:"timezoneName"`
 	} `json:"time"`

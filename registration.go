@@ -1,15 +1,11 @@
 package harperdb
 
-import (
-	"time"
-)
-
 type RegistrationInfoResponse struct {
-	Registered            bool      `json:"registered"`
-	Version               string    `json:"version"`
-	StorageType           string    `json:"storage_type"`
-	RAMAllocation         int       `json:"ram_allocation"`
-	LicenseExpirationDate time.Time `json:"license_expiration_date"`
+	Registered            bool   `json:"registered"`
+	Version               string `json:"version"`
+	StorageType           string `json:"storage_type"`
+	RAMAllocation         int    `json:"ram_allocation"`
+	LicenseExpirationDate string `json:"license_expiration_date"`
 }
 
 func (c *Client) RegistrationInfo() (*RegistrationInfoResponse, error) {

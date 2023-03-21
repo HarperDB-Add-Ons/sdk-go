@@ -32,29 +32,18 @@ func TestListRoles(t *testing.T) {
 	}
 }
 
-func TestDropAndAddRole(t *testing.T) {
-	foundCU, err := findRole(CLUSTER_USER)
+func TestAddAndDropRole(t *testing.T) {
+	roleName := randomID()
+	perms := Permission{}
+	perms.SetClusterUser(false)
+	perms.SetSuperUser(false)
+	r, err := c.AddRole(roleName, perms)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if foundCU == nil {
-		t.Fatal("did not find cluster user role")
-	}
-
-	t.Log(fmt.Sprintf("Found cluster user role id: %s", foundCU.ID))
-	if err := c.DropRole(foundCU.ID); err != nil {
+	if err := c.DropRole(r.ID); err != nil {
 		t.Fatal(err)
-	}
-
-	role := Permission{}
-	role.SetClusterUser(true)
-	newRole, err := c.AddRole(CLUSTER_USER, role)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if newRole.Role != CLUSTER_USER {
-		t.Fatal(fmt.Errorf("expected new role named %s", CLUSTER_USER))
 	}
 }
 

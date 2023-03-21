@@ -8,6 +8,9 @@ const (
 	OP_ADD_USER               = "add_user"
 	OP_ALTER_ROLE             = "alter_role"
 	OP_ALTER_USER             = "alter_user"
+	OP_CLUSTER_SET_ROUTES     = "cluster_set_routes"
+	OP_CLUSTER_GET_ROUTES     = "cluster_get_routes"
+	OP_CLUSTER_DELETE_ROUTES  = "cluster_delete_routes"
 	OP_CLUSTER_STATUS         = "cluster_status"
 	OP_CREATE_ATTRIBUTE       = "create_attribute"
 	OP_CREATE_SCHEMA          = "create_schema"
@@ -98,6 +101,91 @@ func (o OpDescribeSchema) Prepare() interface{} {
 	return Return{
 		Operation:        OP_DESCRIBE_SCHEMA,
 		OpDescribeSchema: o,
+	}
+}
+
+// Set Routes
+type OpSetRoutes struct {
+	Server string  `json:"server"` // Must be either "hub" or "leaf"
+	Routes []Route `json:"routes"`
+}
+
+func (o OpSetRoutes) Prepare() interface{} {
+	type Return struct {
+		Operation string `json:"operation"`
+		OpSetRoutes
+	}
+
+	return Return{
+		Operation:   OP_CLUSTER_SET_ROUTES,
+		OpSetRoutes: o,
+	}
+}
+
+// Delete Routes
+type OpDeleteRoutes struct {
+	Routes []Route `json:"routes"`
+}
+
+func (o OpDeleteRoutes) Prepare() interface{} {
+	type Return struct {
+		Operation string `json:"operation"`
+		OpDeleteRoutes
+	}
+
+	return Return{
+		Operation:      OP_CLUSTER_DELETE_ROUTES,
+		OpDeleteRoutes: o,
+	}
+}
+
+// Get Routes
+type OpGetRoutes struct{}
+
+func (o OpGetRoutes) Prepare() interface{} {
+	type Return struct {
+		Operation string `json:"operation"`
+	}
+
+	return Return{
+		Operation: OP_CLUSTER_GET_ROUTES,
+	}
+}
+
+// Add Node
+type OpAddNode struct {
+	NodeName      string         `json:"node_name"`
+	Host          string         `json:"host"`
+	Port          int            `json:"port"`
+	Subscriptions []Subscription `json:"subscriptions"`
+}
+
+func (o OpAddNode) Prepare() interface{} {
+	type Return struct {
+		Operation string `json:"operation"`
+		OpAddNode
+	}
+
+	return Return{
+		Operation: OP_ADD_NODE,
+		OpAddNode: o,
+	}
+}
+
+// Remove Node
+type OpRemoveNode struct {
+	NodeName string `json:"node_name"`
+}
+
+func (o OpRemoveNode) Prepare() interface{} {
+	type Return struct {
+		Operation string `json:"operation"`
+		OpRemoveNode
+	}
+
+	return Return{
+		Operation:    OP_REMOVE_NODE,
+		OpRemoveNode: o,
 	}
 }
 
