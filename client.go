@@ -21,6 +21,12 @@ func NewClient(endpoint string, username string, password string) *Client {
 	}
 }
 
+// RawRequest allows raw requests to be made against the client.
+// The recommended route for making calls is via the specific function endpoints.
+func (c *Client) RawRequest(op Operation, result interface{}) error {
+	return c.opRequest(op, result)
+}
+
 func (c *Client) opRequest(op Operation, result interface{}) error {
 	e := ErrorResponse{}
 
