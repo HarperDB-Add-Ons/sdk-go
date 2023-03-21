@@ -63,3 +63,26 @@ func TestDropSchema(t *testing.T) {
 		t.Fatal("should have raised DoesNotExist error")
 	}
 }
+
+func TestDescribeSchema(t *testing.T) {
+	schema := randomID()
+	err := c.CreateSchema(schema)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wait()
+
+	_, err = c.DescribeSchema(schema)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDescribeNonExistentSchema(t *testing.T) {
+	schema := randomID()
+	_, err := c.DescribeSchema(schema)
+	if err == nil {
+		t.Fatal("expected failure!")
+	}
+}

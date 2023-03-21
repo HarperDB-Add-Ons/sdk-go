@@ -85,6 +85,22 @@ func (o OpAlterRole) Prepare() interface{} {
 	}
 }
 
+// Describe Schema
+type OpDescribeSchema struct {
+	Schema string `json:"schema"`
+}
+
+func (o OpDescribeSchema) Prepare() interface{} {
+	type Return struct {
+		Operation string `json:"operation"`
+		OpDescribeSchema
+	}
+	return Return{
+		Operation:        OP_DESCRIBE_SCHEMA,
+		OpDescribeSchema: o,
+	}
+}
+
 type operation struct {
 	Action          string          `json:"action,omitempty"`
 	Active          *bool           `json:"active,omitempty"`
