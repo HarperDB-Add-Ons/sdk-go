@@ -1,2 +1,8 @@
 .vscode
 notes
+node_modules
+.direnv/
+.envrc
+package.json
+.gitignore
+package-lock.json

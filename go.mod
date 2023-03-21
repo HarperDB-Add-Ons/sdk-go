@@ -1,6 +1,6 @@
 module github.com/HarperDB/harperdb-sdk-go
 
-go 1.15
+go 1.18
 
 require (
 	github.com/go-resty/resty/v2 v2.3.0

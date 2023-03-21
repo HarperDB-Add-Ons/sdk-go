@@ -63,12 +63,13 @@ func (c *Client) SearchByHash(schema, table string, v interface{}, hashValues At
 // SearchByValue fetches records based on the value of an attribute
 // Wilcards are allowed in `searchValue`
 func (c *Client) SearchByValue(schema, table string, v interface{}, searchAttribute Attribute, searchValue interface{}, getAttributes AttributeList) error {
-	return c.opRequest(operation{
+	op := operation{
 		Operation:       OP_SEARCH_BY_VALUE,
 		Schema:          schema,
 		Table:           table,
 		SearchAttribute: searchAttribute,
 		SearchValue:     searchValue,
 		GetAttributes:   getAttributes,
-	}, &v)
+	}
+	return c.opRequest(op, &v)
 }

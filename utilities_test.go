@@ -6,6 +6,7 @@ func TestSystemStatus(t *testing.T) {
 	guest := "guest"
 
 	// delete guest user and role
+	_ = c.DropRole(guest)
 	_ = c.DropUser(guest)
 
 	// try with standard super user

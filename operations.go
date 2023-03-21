@@ -48,47 +48,88 @@ const (
 	OP_USER_INFO              = "user_info"
 )
 
+type Operation interface {
+	Prepare() interface{}
+}
+
+type OpAddRole struct {
+	Permission Permission `json:"permission"`
+	Role       string     `json:"role"`
+}
+
+func (o OpAddRole) Prepare() interface{} {
+	type Return struct {
+		Operation string `json:"operation"`
+		OpAddRole
+	}
+	return Return{
+		Operation: OP_ADD_ROLE,
+		OpAddRole: o,
+	}
+}
+
+type OpAlterRole struct {
+	ID         string     `json:"id"`
+	Role       string     `json:"role"`
+	Permission Permission `json:"permission"`
+}
+
+func (o OpAlterRole) Prepare() interface{} {
+	type Return struct {
+		Operation string `json:"operation"`
+		OpAlterRole
+	}
+	return Return{
+		Operation:   OP_ALTER_ROLE,
+		OpAlterRole: o,
+	}
+}
+
 type operation struct {
 	Action          string          `json:"action,omitempty"`
 	Active          *bool           `json:"active,omitempty"`
 	Attribute       string          `json:"attribute,omitempty"`
-	Company         string          `json:"company"`
+	Company         string          `json:"company,omitempty"`
 	CSVURL          string          `json:"csv_url,omitempty"`
 	Data            string          `json:"data,omitempty"`
 	Date            time.Time       `json:"date,omitempty"`
 	FilePath        string          `json:"file_path,omitempty"`
-	Format          string          `json:"format"`
-	From            string          `json:"from"`
+	Format          string          `json:"format,omitempty"`
+	From            string          `json:"from,omitempty"`
 	FromDate        string          `json:"from_date,omitempty"`
 	GetAttributes   AttributeList   `json:"get_attributes,omitempty"`
 	HashAttribute   string          `json:"hash_attribute,omitempty"`
 	HashValues      interface{}     `json:"hash_values,omitempty"`
 	Host            string          `json:"host,omitempty"`
 	ID              string          `json:"id,omitempty"`
-	Key             string          `json:"key"`
-	Limit           int             `json:"limit"`
+	Key             string          `json:"key,omitempty"`
+	Limit           int             `json:"limit,omitempty"`
 	Name            string          `json:"name,omitempty"`
 	Operation       string          `json:"operation"`
-	Order           string          `json:"order"`
+	Order           string          `json:"order,omitempty"`
 	Password        string          `json:"password,omitempty"`
-	Path            string          `json:"path"`
+	Path            string          `json:"path,omitempty"`
 	Permission      Permission      `json:"permission,omitempty"`
-	Port            int             `json:"port"`
+	Port            int             `json:"port,omitempty"`
 	Records         interface{}     `json:"records,omitempty"`
 	Role            string          `json:"role,omitempty"`
-	S3              S3Credentials   `json:"s3"`
+	S3              S3Credentials   `json:"s3,omitempty"`
 	Schema          string          `json:"schema,omitempty"`
 	SearchAttribute Attribute       `json:"search_attribute,omitempty"`
-	SearchOperation SearchOperation `json:"search_operation"`
-	SearchType      string          `json:"search_type.omitempty"`
+	SearchOperation SearchOperation `json:"search_operation,omitempty"`
+	SearchType      string          `json:"search_type,omitempty"`
 	SearchValue     interface{}     `json:"search_value,omitempty"`
 	SearchValues    interface{}     `json:"search_values,omitempty"`
-	Start           int             `json:"start"`
+	Start           int             `json:"start,omitempty"`
 	Subscriptions   []Subscription  `json:"subscriptions,omitempty"`
 	SQL             string          `json:"sql,omitempty"`
 	Table           string          `json:"table,omitempty"`
 	Timestamp       int64           `json:"timestamp,omitempty"`
 	ToDate          string          `json:"to_date,omitempty"`
-	Until           string          `json:"until"`
+	Until           string          `json:"until,omitempty"`
 	Username        string          `json:"username,omitempty"`
+}
+
+func (o operation) Prepare() interface{} {
+	return o
 }

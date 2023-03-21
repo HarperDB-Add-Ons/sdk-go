@@ -28,7 +28,7 @@ func TestListRoles(t *testing.T) {
 	}
 
 	if !(foundSU && foundCU) {
-		t.Fatal("did not find super_user or cluster_user role")
+		t.Fatalf("did not find super_user(%t) or cluster_user(%t) role", foundSU, foundCU)
 	}
 }
 
@@ -68,7 +68,7 @@ func TestAlterRole(t *testing.T) {
 		t.Fatal("did not find cluster user role")
 	}
 
-	newName := foundCU.Role + "new"
+	newName := foundCU.Role
 	newRole, err := c.AlterRole(foundCU.ID, newName, foundCU.Permission)
 	if err != nil {
 		t.Fatal(err)
