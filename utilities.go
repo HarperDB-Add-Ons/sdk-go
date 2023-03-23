@@ -18,15 +18,15 @@ const (
 )
 
 type SearchOperation struct {
-	Operation string `json:"operation"`
-	SQL       string `json:"sql"`
+	Operation string `json:"operation,omitempty"`
+	SQL       string `json:"sql,omitempty"`
 }
 
 type S3Credentials struct {
-	AWSAccessKeyID     string `json:"aws_access_key_id"`
-	AWSSecretAccessKey string `json:"aws_secret_access_key"`
-	Bucket             string `json:"bucket"`
-	Key                string `json:"filename"`
+	AWSAccessKeyID     string `json:"aws_access_key_id,omitempty"`
+	AWSSecretAccessKey string `json:"aws_secret_access_key,omitempty"`
+	Bucket             string `json:"bucket,omitempty"`
+	Key                string `json:"filename,omitempty"`
 }
 
 type SysInfo struct {
@@ -43,18 +43,18 @@ type SysInfo struct {
 	} `json:"system"`
 	Time struct {
 		Current      Timestamp `json:"current"`
-		Uptime       int64     `json:"uptime"`
+		Uptime       float64   `json:"uptime"`
 		Timezone     string    `json:"timezone"`
 		TimezoneName string    `json:"timezoneName"`
 	} `json:"time"`
 	CPU struct {
-		Manufacturer  string `json:"manufacturer"`
-		Brand         string `json:"brand"`
-		Vendor        string `json:"vendor"`
-		Speed         string `json:"speed"`
-		Cores         int    `json:"cores"`
-		PhysicalCores int    `json:"physicalCores"`
-		Processors    int    `json:"processors"`
+		Manufacturer  string  `json:"manufacturer"`
+		Brand         string  `json:"brand"`
+		Vendor        string  `json:"vendor"`
+		Speed         float64 `json:"speed"`
+		Cores         int     `json:"cores"`
+		PhysicalCores int     `json:"physicalCores"`
+		Processors    int     `json:"processors"`
 		CPUSpeed      struct {
 			Min   float64   `json:"min"`
 			Max   float64   `json:"max"`
@@ -134,16 +134,16 @@ type DiskSize struct {
 }
 
 type NetworkInterface struct {
-	Iface          string `json:"iface"`
-	IfaceName      string `json:"ifaceName"`
-	IP4            string `json:"ip4"`
-	IP6            string `json:"ip6"`
-	Mac            string `json:"mac"`
-	OperState      string `json:"operstate"`
-	Type           string `json:"virtual"`
-	Duplex         string `json:"duplex"`
-	Speed          int64  `json:"speed"`
-	CarrierChanges int64  `json:"carrierChanges"`
+	Iface          string  `json:"iface"`
+	IfaceName      string  `json:"ifaceName"`
+	IP4            string  `json:"ip4"`
+	IP6            string  `json:"ip6"`
+	Mac            string  `json:"mac"`
+	OperState      string  `json:"operstate"`
+	Type           string  `json:"virtual"`
+	Duplex         string  `json:"duplex"`
+	Speed          float64 `json:"speed"`
+	CarrierChanges int64   `json:"carrierChanges"`
 }
 
 type NetworkStats struct {

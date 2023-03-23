@@ -14,7 +14,7 @@ func TestListUsers(t *testing.T) {
 	// We expect at least to have the HDB_ADMIN
 	var found bool
 	for _, user := range users {
-		if user.Username == "HDB_ADMIN" {
+		if user.Username == DEFAULT_USERNAME {
 			found = true
 			break
 		}
@@ -32,10 +32,11 @@ func TestAddUser(t *testing.T) {
 	}
 
 	testUser := randomID()
-	err = c.AddUser(testUser, randomID(), superUser.ID, true)
+	err = c.AddUser(testUser, randomID(), superUser.Role, true)
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer c.DropUser(testUser)
 
 	user, err := findUser(testUser)
 	if err != nil {
@@ -43,11 +44,6 @@ func TestAddUser(t *testing.T) {
 	}
 	if user == nil {
 		t.Fatal(fmt.Sprintf("expected to find user %s", testUser))
-	}
-
-	err = c.DropUser(testUser)
-	if err != nil {
-		t.Fatal(err)
 	}
 }
 
@@ -58,13 +54,14 @@ func TestAlterUser(t *testing.T) {
 	}
 
 	testUser := randomID()
-	err = c.AddUser(testUser, randomID(), superUser.ID, true)
+	err = c.AddUser(testUser, randomID(), superUser.Role, true)
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer c.DropUser(testUser)
 
 	// set user to inactive
-	err = c.AlterUser(testUser, randomID(), superUser.ID, false)
+	err = c.AlterUser(testUser, randomID(), superUser.Role, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -79,11 +76,6 @@ func TestAlterUser(t *testing.T) {
 	if user.Active {
 		t.Fatal("did not expect user to be active")
 	}
-
-	err = c.DropUser(testUser)
-	if err != nil {
-		t.Fatal(err)
-	}
 }
 
 func TestUserInfo(t *testing.T) {
@@ -92,8 +84,8 @@ func TestUserInfo(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if user.Username != "HDB_ADMIN" {
-		t.Fatal(fmt.Errorf("expected user to be HDB_ADMIN"))
+	if user.Username != DEFAULT_USERNAME {
+		t.Fatal(fmt.Errorf("expected user to be %s: %s", DEFAULT_USERNAME, user.Username))
 	}
 }
 

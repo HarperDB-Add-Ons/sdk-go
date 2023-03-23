@@ -4,6 +4,8 @@ type Subscription struct {
 	Channel   string `json:"channel"`
 	Subscribe bool   `json:"subscribe"`
 	Publish   bool   `json:"publish"`
+	Schema    string `json:"schema"`
+	Table     string `json:"table"`
 }
 
 type Connection struct {
@@ -27,13 +29,14 @@ type ClusterStatusResponse struct {
 }
 
 func (c *Client) AddNode(name, host string, port int, subscriptions []Subscription) error {
-	return c.opRequest(operation{
-		Operation:     OP_ADD_NODE,
-		Name:          name,
+	req := OpAddNode{
+		NodeName:      name,
 		Host:          host,
 		Port:          port,
 		Subscriptions: subscriptions,
-	}, nil)
+	}
+
+	return c.opRequest(req, nil)
 }
 
 func (c *Client) UpdateNode(name, host string, port int, subscriptions []Subscription) error {
@@ -47,10 +50,10 @@ func (c *Client) UpdateNode(name, host string, port int, subscriptions []Subscri
 }
 
 func (c *Client) RemoveNode(name string) error {
-	return c.opRequest(operation{
-		Operation: OP_REMOVE_NODE,
-		Name:      name,
-	}, nil)
+	req := OpRemoveNode{
+		NodeName: name,
+	}
+	return c.opRequest(req, nil)
 }
 
 func (c *Client) ClusterStatus() (*ClusterStatusResponse, error) {

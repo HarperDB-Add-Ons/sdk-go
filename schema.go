@@ -20,12 +20,17 @@ func (c *Client) DropSchema(schema string) error {
 	}, nil)
 }
 
-type DescribeSchemaResponse struct {
-}
+// DescribeSchemaResponse is a temporary type until it is defined more accurately.
+type DescribeSchemaResponse map[string]interface{}
 
 // DescribeSchema returns metadata about a schema.
-/*
 func (c *Client) DescribeSchema(schema string) (DescribeSchemaResponse, error) {
-
+	var schemaData DescribeSchemaResponse
+	err := c.opRequest(OpDescribeSchema{
+		Schema: schema,
+	}, &schemaData)
+	if err != nil {
+		return DescribeSchemaResponse{}, err
+	}
+	return schemaData, nil
 }
-*/

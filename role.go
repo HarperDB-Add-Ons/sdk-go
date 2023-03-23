@@ -59,11 +59,11 @@ func (c *Client) ListRoles() ([]Role, error) {
 
 func (c *Client) AddRole(role string, perm Permission) (*Role, error) {
 	var newRole Role
-	err := c.opRequest(operation{
-		Operation:  OP_ADD_ROLE,
+	req := OpAddRole{
 		Role:       role,
 		Permission: perm,
-	}, &newRole)
+	}
+	err := c.opRequest(req, &newRole)
 	if err != nil {
 		return nil, err
 	}
@@ -80,12 +80,12 @@ func (c *Client) DropRole(id string) error {
 
 func (c *Client) AlterRole(id string, role string, perm Permission) (*Role, error) {
 	var newRole Role
-	err := c.opRequest(operation{
-		Operation:  OP_ALTER_ROLE,
+	req := OpAlterRole{
 		ID:         id,
 		Role:       role,
 		Permission: perm,
-	}, &newRole)
+	}
+	err := c.opRequest(req, &newRole)
 	if err != nil {
 		return nil, err
 	}

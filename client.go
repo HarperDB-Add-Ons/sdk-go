@@ -13,7 +13,6 @@ func NewClient(endpoint string, username string, password string) *Client {
 	httpClient := resty.
 		New().
 		SetDisableWarn(true).
-		//		SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true}).
 		SetBasicAuth(username, password)
 
 	return &Client{
@@ -22,12 +21,18 @@ func NewClient(endpoint string, username string, password string) *Client {
 	}
 }
 
-func (c *Client) opRequest(op operation, result interface{}) error {
+// RawRequest allows raw requests to be made against the client.
+// The recommended route for making calls is via the specific function endpoints.
+func (c *Client) RawRequest(op Operation, result interface{}) error {
+	return c.opRequest(op, result)
+}
+
+func (c *Client) opRequest(op Operation, result interface{}) error {
 	e := ErrorResponse{}
 
 	req := c.HttpClient.
 		NewRequest().
-		SetBody(op).
+		SetBody(op.Prepare()).
 		SetError(&e)
 
 	if result != nil {

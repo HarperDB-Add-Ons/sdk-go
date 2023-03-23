@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	uuid "github.com/satori/go.uuid"
+	uuid "github.com/google/uuid"
 )
 
 const (
@@ -35,7 +35,7 @@ func wait() {
 }
 
 func randomID() string {
-	return fmt.Sprintf("id_%s", strings.ReplaceAll(uuid.NewV4().String(), "-", "_"))
+	return fmt.Sprintf("id_%s", strings.ReplaceAll(uuid.NewString(), "-", "_"))
 }
 
 func TestNewClient(t *testing.T) {
