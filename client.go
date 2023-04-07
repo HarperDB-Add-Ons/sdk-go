@@ -48,7 +48,7 @@ func (c *Client) opRequest(op Operation, result interface{}) error {
 	if resp.StatusCode() > 399 {
 		return &OperationError{
 			StatusCode: resp.StatusCode(),
-			Message:    e.Error}
+			Message:    string(resp.Body())}
 	}
 
 	return nil
