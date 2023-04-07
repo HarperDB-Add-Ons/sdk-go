@@ -1,7 +1,7 @@
 package harperdb
 
 type SchemaPermission struct {
-	Tables map[string]TablePermission
+	Tables map[string]TablePermission `json:"tables"`
 }
 
 type AttributePermissions struct {
