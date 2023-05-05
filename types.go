@@ -23,7 +23,7 @@ type Record struct {
 	UpdatedTime Timestamp `json:"__updatedtime__"`
 }
 
-type Timestamp int64
+type Timestamp float64
 
 func (t Timestamp) ToTime() time.Time {
 	return time.Unix(int64(t)/1000, int64(t)&1000)
