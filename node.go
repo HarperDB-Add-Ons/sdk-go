@@ -1,11 +1,12 @@
 package harperdb
 
 type Subscription struct {
-	Channel   string `json:"channel"`
+	Channel   string `json:"channel,omitempty"`
 	Subscribe bool   `json:"subscribe"`
 	Publish   bool   `json:"publish"`
-	Schema    string `json:"schema"`
+	Schema    string `json:"schema,omitempty"`
 	Table     string `json:"table"`
+	Database  string `json:"database,omitempty"`
 }
 
 type Connection struct {

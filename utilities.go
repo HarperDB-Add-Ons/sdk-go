@@ -17,6 +17,16 @@ const (
 	SearchByValue = "search_by_value"
 )
 
+type ImportFromS3Response struct {
+	MessageResponse
+	JobId string `json:"job_id"`
+}
+
+type DeleteRecordsBeforeResponse struct {
+	MessageResponse
+	JobId string `json:"job_id"`
+}
+
 type SearchOperation struct {
 	Operation string `json:"operation,omitempty"`
 	SQL       string `json:"sql,omitempty"`
@@ -27,6 +37,7 @@ type S3Credentials struct {
 	AWSSecretAccessKey string `json:"aws_secret_access_key,omitempty"`
 	Bucket             string `json:"bucket,omitempty"`
 	Key                string `json:"filename,omitempty"`
+	Region             string `json:"region,omitempty"`
 }
 
 type SysInfo struct {
@@ -182,7 +193,7 @@ func (c *Client) ExportLocal(format, path string, searchOperation SearchOperatio
 		Operation:       OP_EXPORT_TO_S3,
 		Format:          format,
 		Path:            path,
-		SearchOperation: searchOperation,
+		SearchOperation: &searchOperation,
 	}, nil)
 }
 
@@ -190,9 +201,21 @@ func (c *Client) ExportToS3(format string, s3creds S3Credentials, searchOperatio
 	return c.opRequest(operation{
 		Operation:       OP_EXPORT_TO_S3,
 		Format:          format,
-		S3:              s3creds,
-		SearchOperation: searchOperation,
+		S3:              &s3creds,
+		SearchOperation: &searchOperation,
 	}, nil)
+}
+
+func (c *Client) ImportFromS3(action, database, table string, s3creds S3Credentials) (*ImportFromS3Response, error) {
+	var result ImportFromS3Response
+	err := c.opRequest(operation{
+		Operation: OP_IMPORT_FROM_S3,
+		Action:    action,
+		Database:  database,
+		Table:     table,
+		S3:        &s3creds,
+	}, &result)
+	return &result, err
 }
 
 func (c *Client) SystemInformation() (*SysInfo, error) {
@@ -201,4 +224,55 @@ func (c *Client) SystemInformation() (*SysInfo, error) {
 		Operation: OP_SYSTEM_INFORMATION,
 	}, &sysInfo)
 	return &sysInfo, err
+}
+
+func (c *Client) Restart() (*MessageResponse, error) {
+	var response MessageResponse
+	err := c.opRequest(operation{
+		Operation: OP_RESTART,
+	}, &response)
+
+	return &response, err
+}
+
+func (c *Client) RestartService(service string) (*MessageResponse, error) {
+	var response MessageResponse
+	err := c.opRequest(operation{
+		Operation: OP_RESTART_SERVICE,
+		Service:   service,
+	}, &response)
+
+	return &response, err
+}
+
+// func (c *Client) DeleteRecordsBefore(date time.Time, schema, table string) (*DeleteRecordsBeforeResponse, error) {
+// 	var response DeleteRecordsBeforeResponse
+// 	err := c.opRequest(operation{
+// 		Operation: OP_DELETE_RECORDS_BEFORE,
+// 		Date:      date.UTC().Format(time.RFC3339),
+// 		Schema:    schema,
+// 		Table:     table,
+// 	}, &response)
+
+// 	return &response, err
+// }
+
+func (c *Client) InstallNodeModules(projects []string, dryRun bool) (*MessageResponse, error) {
+	var response MessageResponse
+	err := c.opRequest(operation{
+		Operation: OP_INSTALL_NODE_MODULES,
+		Projects:  projects,
+		DryRun:    dryRun,
+	}, &response)
+
+	return &response, err
+}
+
+func (c *Client) GetConfiguration() (map[string]interface{}, error) {
+	var response map[string]interface{}
+	err := c.opRequest(operation{
+		Operation: OP_GET_CONFIGURATION,
+	}, &response)
+
+	return response, err
 }

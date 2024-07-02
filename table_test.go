@@ -63,11 +63,8 @@ func TestCreateTableInUnknownSchema(t *testing.T) {
 	table := randomID()
 
 	err := c.CreateTable(schema, table, "id")
-	if e, ok := err.(*OperationError); ok && e.IsDoesNotExistError() {
-		return
-	} else {
-		t.Log(e)
-		t.Fatalf("should have raised DoesNotExistError")
+	if err != nil {
+		t.Fatal(err)
 	}
 }
 

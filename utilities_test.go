@@ -37,3 +37,39 @@ func TestSystemStatus(t *testing.T) {
 
 	t.Fatal("expected SystemInfo call with guest user to fail")
 }
+
+func TestRestart(t *testing.T) {
+	if _, err := c.Restart(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRestartServic(t *testing.T) {
+	if _, err := c.RestartService("http_workers"); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetConfiguration(t *testing.T) {
+	if _, err := c.GetConfiguration(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestInstallNodeModule(t *testing.T) {
+	if _, err := c.DeployComponent("my-project", DeployComponentOptions{Package: "HarperDB/application-template"}); err != nil {
+		t.Fatal(err)
+	}
+
+	wait()
+
+	if _, err := c.InstallNodeModules([]string{"my-project"}, false); err != nil {
+		t.Fatal(err)
+	}
+
+	wait()
+
+	if _, err := c.DropComponent("my-project", ""); err != nil {
+		t.Fatal(err)
+	}
+}

@@ -12,6 +12,12 @@ type aRecord struct {
 	Name string `json:"name"`
 }
 
+type aCondition struct {
+	SearchAttribute string `json:"search_attribute"`
+	SearchType      string `json:"search_type"`
+	SearchValue     string `json:"search_value"`
+}
+
 func createTestRecord() aRecord {
 	return aRecord{
 		ID:   randomID(),
@@ -335,4 +341,149 @@ func TestSearchByValue(t *testing.T) {
 		t.Fatal(err)
 	}
 
+}
+
+func TestSearchById(t *testing.T) {
+	database := randomID()
+	table := randomID()
+
+	if err := c.CreateDatabase(database); err != nil {
+		t.Fatal(err)
+	}
+
+	wait()
+
+	if err := c.CreateTable(database, table, "id"); err != nil {
+		t.Log(err)
+		t.FailNow()
+	}
+
+	wait()
+
+	record := createTestRecord()
+
+	lookupList := []string{record.ID}
+	if _, err := c.Insert(database, table, []interface{}{
+		record,
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	found := []aRecord{}
+	err := c.SearchById(database, table, &found, lookupList, AllAttributes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if num := len(found); num != 1 {
+		t.Fatal(fmt.Errorf("wanted 1, got %d", num))
+	}
+	if !(found[0].ID == record.ID && found[0].Name == record.Name) {
+		t.Fatal(fmt.Errorf("record data is not the same"))
+	}
+	if !found[0].CreatedTime.ToTime().Before(time.Now()) {
+		t.Fatal(fmt.Errorf("record timestamp is too recent"))
+	}
+
+	if err := c.DropSchema(database); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpsert(t *testing.T) {
+	database := randomID()
+	table := randomID()
+
+	if err := c.CreateDatabase(database); err != nil {
+		t.Fatal(err)
+	}
+
+	wait()
+
+	if err := c.CreateTable(database, table, "id"); err != nil {
+		t.Log(err)
+		t.FailNow()
+	}
+
+	wait()
+
+	id := randomID()
+	record := aRecord{
+		ID:   id,
+		Name: "Harper, the dog",
+	}
+
+	resp, err := c.Upsert(database, table, []interface{}{
+		record,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(resp)
+
+	record.Name = "Harper, the wolf"
+
+	resp, err = c.Upsert(database, table, []interface{}{
+		record,
+	})
+	t.Log(resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(resp.UpsertedHashes) != 1 {
+		t.Fatal(fmt.Errorf("expected 1 upserted hash"))
+		t.FailNow()
+	}
+	if resp.UpsertedHashes[0] != id {
+		t.Fatal("Expected upserted record to match ID of insert")
+	}
+}
+
+func TestSearchByConditions(t *testing.T) {
+	database := randomID()
+	table := randomID()
+
+	if err := c.CreateDatabase(database); err != nil {
+		t.Fatal(err)
+	}
+
+	wait()
+
+	if err := c.CreateTable(database, table, "id"); err != nil {
+		t.Log(err)
+		t.FailNow()
+	}
+
+	wait()
+
+	record := createTestRecord()
+
+	if _, err := c.Insert(database, table, []interface{}{
+		record,
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	found := []aRecord{}
+	conditions := aCondition{
+		SearchAttribute: "name",
+		SearchType:      "equals",
+		SearchValue:     record.Name,
+	}
+	err := c.SearchByConditions(database, table, &found, []interface{}{conditions}, AllAttributes, SearchByConditionsOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if num := len(found); num != 1 {
+		t.Fatal(fmt.Errorf("wanted 1, got %d", num))
+	}
+	if !(found[0].ID == record.ID && found[0].Name == record.Name) {
+		t.Fatal(fmt.Errorf("record data is not the same"))
+	}
+	if !found[0].CreatedTime.ToTime().Before(time.Now()) {
+		t.Fatal(fmt.Errorf("record timestamp is too recent"))
+	}
+
+	if err := c.DropSchema(database); err != nil {
+		t.Fatal(err)
+	}
 }

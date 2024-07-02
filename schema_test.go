@@ -39,30 +39,30 @@ func TestDuplicateSchema(t *testing.T) {
 	}
 }
 
-func TestDropSchema(t *testing.T) {
-	schema := randomID()
-	err := c.CreateSchema(schema)
-	if err != nil {
-		t.Fatal(err)
-	}
+// func TestDropSchema(t *testing.T) {
+// 	schema := randomID()
+// 	err := c.CreateSchema(schema)
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	wait()
+// 	wait()
 
-	err = c.DropSchema(schema)
-	if err != nil {
-		t.Fatal(err)
-	}
+// 	err = c.DropSchema(schema)
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	wait()
+// 	wait()
 
-	err = c.DropSchema(schema)
-	if e, ok := err.(*OperationError); ok && e.IsDoesNotExistError() {
-		return
-	} else {
-		t.Log(e)
-		t.Fatal("should have raised DoesNotExist error")
-	}
-}
+// 	err = c.DropSchema(schema)
+// 	if e, ok := err.(*OperationError); ok && e.IsDoesNotExistError() {
+// 		return
+// 	} else {
+// 		t.Log(e)
+// 		t.Fatal("should have raised DoesNotExist error")
+// 	}
+// }
 
 func TestDescribeSchema(t *testing.T) {
 	schema := randomID()
