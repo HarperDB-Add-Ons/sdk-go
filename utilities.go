@@ -1,15 +1,10 @@
 package harperdb
 
-import "time"
-
-func (c *Client) DeleteFilesBefore(schema, table string, date time.Time) error {
-	return c.opRequest(operation{
-		Operation: OP_DELETE_FILES_BEFORE,
-		Schema:    schema,
-		Table:     table,
-		Date:      date,
-	}, nil)
-}
+import (
+	"encoding/json"
+	"errors"
+	"time"
+)
 
 const (
 	SearchBySQL   = "sql"
@@ -245,17 +240,18 @@ func (c *Client) RestartService(service string) (*MessageResponse, error) {
 	return &response, err
 }
 
-// func (c *Client) DeleteRecordsBefore(date time.Time, schema, table string) (*DeleteRecordsBeforeResponse, error) {
-// 	var response DeleteRecordsBeforeResponse
-// 	err := c.opRequest(operation{
-// 		Operation: OP_DELETE_RECORDS_BEFORE,
-// 		Date:      date.UTC().Format(time.RFC3339),
-// 		Schema:    schema,
-// 		Table:     table,
-// 	}, &response)
+func (c *Client) DeleteRecordsBefore(date time.Time, schema, table string) (*DeleteRecordsBeforeResponse, error) {
+	var response DeleteRecordsBeforeResponse
 
-// 	return &response, err
-// }
+	err := c.opRequest(operation{
+		Operation: OP_DELETE_RECORDS_BEFORE,
+		Date:      date.UTC().Format(time.RFC3339),
+		Schema:    schema,
+		Table:     table,
+	}, &response)
+
+	return &response, err
+}
 
 func (c *Client) InstallNodeModules(projects []string, dryRun bool) (*MessageResponse, error) {
 	var response MessageResponse
@@ -275,4 +271,20 @@ func (c *Client) GetConfiguration() (map[string]interface{}, error) {
 	}, &response)
 
 	return response, err
+}
+
+func (c *Client) SetConfiguration(configuration interface{}) (*MessageResponse, error) {
+	var response MessageResponse
+	data, err := json.Marshal(configuration)
+	if err != nil {
+		return &MessageResponse{"unable to marshal struct into json"}, errors.New("unable to marshal struct into json")
+	}
+	v2 := map[string]interface{}{}
+	if err := json.Unmarshal(data, &v2); err != nil {
+		return &MessageResponse{"unable to unmarhsal struct into map"}, errors.New("unable to unmarhsal struct into map")
+	}
+	v2["operation"] = "set_configuration"
+	err = c.SetConfigurationRequest(v2, &response)
+
+	return &response, err
 }

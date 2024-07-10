@@ -40,3 +40,24 @@ func TestCreateDuplicateDatabase(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestGetBackup(t *testing.T) {
+	database := randomID()
+	table := randomID()
+
+	if err := c.CreateDatabase(database); err != nil {
+		t.Fatal(err)
+	}
+
+	wait()
+
+	if err := c.CreateTable(database, table, "id"); err != nil {
+		t.Fatal(err)
+	}
+
+	wait()
+
+	if _, err := c.GetBackup(database, GetBackupOptions{Table: table}); err != nil {
+		t.Fatal(err)
+	}
+}

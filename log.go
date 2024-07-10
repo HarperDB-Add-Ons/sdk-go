@@ -1,6 +1,8 @@
 package harperdb
 
-import "time"
+import (
+	"time"
+)
 
 const (
 	LogOrderAsc  = "asc"
@@ -76,7 +78,7 @@ func (c Client) ReadTransactionLog(schema, table, searchType string, searchValue
 func (c *Client) ReadAuditLog(schema, table string, searchType string, searchValues interface{}) ([]AuditLogEntry, error) {
 	var result []AuditLogEntry
 	err := c.opRequest(operation{
-		Operation:    OP_READ_TRANSACTION_LOG,
+		Operation:    OP_READ_AUDIT_LOG,
 		Schema:       schema,
 		Table:        table,
 		SearchType:   searchType,
@@ -101,7 +103,7 @@ func (c *Client) DeleteAuditLogsBefore(schema, table string, timestamp time.Time
 		Operation: OP_DELETE_AUDIT_LOGS_BEFORE,
 		Schema:    schema,
 		Table:     table,
-		Timestamp: timestamp.UnixNano(),
+		Timestamp: timestamp.UnixMilli(),
 	}, &response)
 
 	return &response, err

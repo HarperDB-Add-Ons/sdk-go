@@ -1,7 +1,5 @@
 package harperdb
 
-import "time"
-
 const (
 	OP_ADD_COMPONENT                   = "add_component"
 	OP_ADD_CUSTOM_FUNCTION_PROJECT     = "add_custom_function_project"
@@ -230,12 +228,12 @@ type operation struct {
 	Action          string                       `json:"action,omitempty"`
 	Active          *bool                        `json:"active,omitempty"`
 	Attribute       string                       `json:"attribute,omitempty"`
-	Conditions      interface{}                  `json:"conditions,omitempty"`
+	Conditions      []SearchCondition            `json:"conditions,omitempty"`
 	Connections     []ConfigureClusterConnection `json:"connections,omitempty"`
 	Company         string                       `json:"company,omitempty"`
 	CSVURL          string                       `json:"csv_url,omitempty"`
 	Data            string                       `json:"data,omitempty"`
-	Date            time.Time                    `json:"date,omitempty"`
+	Date            string                       `json:"date,omitempty"`
 	Database        string                       `json:"database,omitempty"`
 	DryRun          bool                         `json:"dry_run,omitempty"`
 	File            string                       `json:"file,omitempty"`

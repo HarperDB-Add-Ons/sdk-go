@@ -24,6 +24,14 @@ func (c *Client) DropDatabase(database string) error {
 	}, nil)
 }
 
-// func (c *Client) GetBackup(database string, options GetBackupOptions) {
+func (c *Client) GetBackup(database string, options GetBackupOptions) ([]byte, error) {
+	var bytes = []byte{}
+	op := operation{
+		Operation: OP_GET_BACKUP,
+		Database:  database,
+	}
 
-// }
+	err := c.opRequest(op, &bytes)
+
+	return bytes, err
+}

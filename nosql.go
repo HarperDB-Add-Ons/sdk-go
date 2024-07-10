@@ -17,6 +17,14 @@ type SearchByConditionsOptions struct {
 	Sort     Sort   `json:"sort,omitempty"`
 }
 
+type SearchCondition struct {
+	Attribute  string             `json:"search_attribute,omitempty"`
+	Type       string             `json:"search_type,omitempty"`
+	Value      interface{}        `json:"search_value,omitempty"`
+	Operator   string             `json:"operator,omitempty"`
+	Conditions []*SearchCondition `json:"conditions,omitempty"`
+}
+
 type Sort struct {
 	Attribute  string `json:"attribute,omitempty"`
 	Descending bool   `json:"descending,omitempty"`
@@ -112,7 +120,7 @@ func (c *Client) SearchByValue(schema, table string, v interface{}, searchAttrib
 	return c.opRequest(op, &v)
 }
 
-func (c *Client) SearchByConditions(database, table string, v interface{}, conditions interface{}, getAttributes AttributeList, options SearchByConditionsOptions) error {
+func (c *Client) SearchByConditions(database, table string, v interface{}, conditions []SearchCondition, getAttributes AttributeList, options SearchByConditionsOptions) error {
 	op := operation{
 		Operation:     OP_SEARCH_BY_CONDITIONS,
 		Database:      database,

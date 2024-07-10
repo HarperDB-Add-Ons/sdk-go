@@ -12,12 +12,6 @@ type aRecord struct {
 	Name string `json:"name"`
 }
 
-type aCondition struct {
-	SearchAttribute string `json:"search_attribute"`
-	SearchType      string `json:"search_type"`
-	SearchValue     string `json:"search_value"`
-}
-
 func createTestRecord() aRecord {
 	return aRecord{
 		ID:   randomID(),
@@ -464,12 +458,12 @@ func TestSearchByConditions(t *testing.T) {
 	}
 
 	found := []aRecord{}
-	conditions := aCondition{
-		SearchAttribute: "name",
-		SearchType:      "equals",
-		SearchValue:     record.Name,
+	conditions := SearchCondition{
+		Attribute: "name",
+		Type:      "equals",
+		Value:     record.Name,
 	}
-	err := c.SearchByConditions(database, table, &found, []interface{}{conditions}, AllAttributes, SearchByConditionsOptions{})
+	err := c.SearchByConditions(database, table, &found, []SearchCondition{conditions}, AllAttributes, SearchByConditionsOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
