@@ -18,6 +18,14 @@ func TestCreateDropDatabase(t *testing.T) {
 	}
 }
 
+func TestDescribeDatabase(t *testing.T) {
+	database := randomID()
+
+	if _, err := c.DescribeDatabase(database); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestCreateDuplicateDatabase(t *testing.T) {
 	database := randomID()
 	if err := c.CreateDatabase(database); err != nil {

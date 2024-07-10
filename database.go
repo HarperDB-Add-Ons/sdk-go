@@ -35,3 +35,13 @@ func (c *Client) GetBackup(database string, options GetBackupOptions) ([]byte, e
 
 	return bytes, err
 }
+
+func (c *Client) DescribeDatabase(database string) (*MessageResponse, error) {
+	var response MessageResponse
+	err := c.opRequest(operation{
+		Operation: OP_DESCRIBE_DATABASE,
+		Database:  database,
+	}, &response)
+
+	return &response, err
+}

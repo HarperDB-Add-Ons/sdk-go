@@ -28,6 +28,7 @@ const (
 	OP_DEPLOY_COMPONENT                = "deploy_component"
 	OP_DESCRIBE_ALL                    = "describe_all"
 	OP_DESCRIBE_SCHEMA                 = "describe_schema"
+	OP_DESCRIBE_DATABASE               = "describe_database"
 	OP_DESCRIBE_TABLE                  = "describe_table"
 	OP_DELETE                          = "delete"
 	OP_DELETE_AUDIT_LOGS_BEFORE        = "delete_audit_logs_before"
