@@ -12,7 +12,7 @@ type GetBackupOptions struct {
 
 func (c *Client) CreateDatabase(database string) error {
 	return c.opRequest(operation{
-		Operation: OP_CREATE_DATABSE,
+		Operation: OP_CREATE_DATABASE,
 		Database:  database,
 	}, nil)
 }

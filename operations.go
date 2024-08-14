@@ -16,7 +16,7 @@ const (
 	OP_CONFIGURE_CLUSTER               = "configure_cluster"
 	OP_CREATE_ATTRIBUTE                = "create_attribute"
 	OP_CREATE_AUTHENTICATION_TOKENS    = "create_authentication_tokens"
-	OP_CREATE_DATABSE                  = "create_database"
+	OP_CREATE_DATABASE                 = "create_database"
 	OP_CREATE_SCHEMA                   = "create_schema"
 	OP_CREATE_TABLE                    = "create_table"
 	OP_CSV_DATA_LOAD                   = "csv_data_load"
