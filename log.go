@@ -1,6 +1,8 @@
 package harperdb
 
-import "time"
+import (
+	"time"
+)
 
 const (
 	LogOrderAsc  = "asc"
@@ -34,12 +36,20 @@ type TxLogEntry struct {
 	// the exact structure of the data
 }
 
+type AuditLogEntry struct {
+	Operation  string        `json:"operation"`
+	UserName   string        `json:"user_name"`
+	Timestamp  Timestamp     `json:"timestamp"`
+	HashValues []interface{} `json:"hash_values"`
+	Records    []map[string]interface{}
+}
+
 func (c *Client) ReadHarperDBLog(limit, start int, from, until time.Time, order string) (*LogResponse, error) {
 	var result LogResponse
 	err := c.opRequest(operation{
 		Operation: OP_READ_LOG,
 		Limit:     limit,
-		Start:     0,
+		Start:     start,
 		From:      from.Format(DATE_FORMAT),
 		Until:     until.Format(DATE_FORMAT),
 		Order:     order,
@@ -64,6 +74,20 @@ func (c Client) ReadTransactionLog(schema, table, searchType string, searchValue
 	return result, err
 }
 
+// Leave searchType empty (LogSearchTypeAll) to get all entries.
+func (c *Client) ReadAuditLog(schema, table string, searchType string, searchValues interface{}) ([]AuditLogEntry, error) {
+	var result []AuditLogEntry
+	err := c.opRequest(operation{
+		Operation:    OP_READ_AUDIT_LOG,
+		Schema:       schema,
+		Table:        table,
+		SearchType:   searchType,
+		SearchValues: searchValues,
+	}, &result)
+
+	return result, err
+}
+
 func (c Client) DeleteTransactionLogsBefore(schema, table string, timestamp time.Time) error {
 	return c.opRequest(operation{
 		Operation: OP_DELETE_TRANSACTION_LOG,
@@ -71,4 +95,16 @@ func (c Client) DeleteTransactionLogsBefore(schema, table string, timestamp time
 		Table:     table,
 		Timestamp: timestamp.UnixNano(),
 	}, nil)
+}
+
+func (c *Client) DeleteAuditLogsBefore(schema, table string, timestamp time.Time) (*MessageResponse, error) {
+	var response MessageResponse
+	err := c.opRequest(operation{
+		Operation: OP_DELETE_AUDIT_LOGS_BEFORE,
+		Schema:    schema,
+		Table:     table,
+		Timestamp: timestamp.UnixMilli(),
+	}, &response)
+
+	return &response, err
 }

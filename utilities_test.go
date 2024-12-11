@@ -2,6 +2,7 @@ package harperdb
 
 import (
 	"testing"
+	"time"
 )
 
 func TestSystemStatus(t *testing.T) {
@@ -36,4 +37,77 @@ func TestSystemStatus(t *testing.T) {
 	}
 
 	t.Fatal("expected SystemInfo call with guest user to fail")
+}
+
+func TestGetConfiguration(t *testing.T) {
+	if _, err := c.GetConfiguration(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestInstallNodeModule(t *testing.T) {
+	if _, err := c.AddCustomFunctionProject("my-project"); err != nil {
+		t.Fatal(err)
+	}
+
+	wait()
+
+	if _, err := c.InstallNodeModules([]string{"my-project"}, false); err != nil {
+		t.Fatal(err)
+	}
+
+	wait()
+
+	if _, err := c.DropComponent("my-project", ""); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDeleteRecordsBefore(t *testing.T) {
+	database := randomID()
+	table := randomID()
+
+	if err := c.CreateDatabase(database); err != nil {
+		t.Fatal(err)
+	}
+
+	wait()
+
+	if err := c.CreateTable(database, table, "id"); err != nil {
+		t.Log(err)
+		t.FailNow()
+	}
+
+	record := createTestRecord()
+
+	if _, err := c.Insert(database, table, []interface{}{record}); err != nil {
+		t.Fatal(err)
+	}
+
+	time.Sleep(time.Second * 5)
+
+	if message, err := c.DeleteRecordsBefore(time.Now(), database, table); err != nil {
+		t.Log(message)
+		t.Fatal(err)
+	}
+
+	time.Sleep(time.Second * 5)
+	resp, err := c.DescribeTable(database, table)
+	if err != nil {
+
+		t.Fatal(err)
+	}
+	t.Log(resp)
+	t.Log(resp.RecordCount)
+	if resp.RecordCount != 0 {
+		t.Fatal("There should not be any records left in the table")
+	}
+}
+
+func TestSetConfiguration(t *testing.T) {
+	var configuration = map[string]interface{}{}
+	configuration["LOGGING_ROTATION_ENABLED"] = true
+	if _, err := c.SetConfiguration(configuration); err != nil {
+		t.Fatal(err)
+	}
 }

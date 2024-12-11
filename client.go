@@ -1,6 +1,8 @@
 package harperdb
 
 import (
+	"fmt"
+
 	"github.com/go-resty/resty/v2"
 )
 
@@ -34,6 +36,30 @@ func (c *Client) opRequest(op Operation, result interface{}) error {
 		NewRequest().
 		SetBody(op.Prepare()).
 		SetError(&e)
+
+	if result != nil {
+		req.SetResult(result)
+	}
+
+	resp, err := req.Post(c.endpoint)
+	if err != nil {
+		return &OperationError{
+			StatusCode: resp.StatusCode(),
+			Message:    err.Error()}
+	}
+	if resp.StatusCode() > 399 {
+		return &OperationError{
+			StatusCode: resp.StatusCode(),
+			Message:    string(resp.Body())}
+	}
+
+	return nil
+}
+
+func (c *Client) SetConfigurationRequest(op interface{}, result interface{}) error {
+	e := ErrorResponse{}
+	fmt.Println(op)
+	req := c.HttpClient.NewRequest().SetBody(op).SetError(&e)
 
 	if result != nil {
 		req.SetResult(result)
