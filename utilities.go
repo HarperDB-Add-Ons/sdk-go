@@ -68,7 +68,7 @@ type SysInfo struct {
 			Cores []float64 `json:"cores"`
 		} `json:"cpu_speed"`
 		CurrentLoad struct {
-			AvgLoag           float64 `json:"avgload"`
+			AvgLoad           float64 `json:"avgload"`
 			CurrentLoad       float64 `json:"currentload"`
 			CurrentLoadUser   float64 `json:"currentload_user"`
 			CurrentLoadSystem float64 `json:"currentload_system"`
