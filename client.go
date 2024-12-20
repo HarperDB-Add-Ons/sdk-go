@@ -58,7 +58,6 @@ func (c *Client) opRequest(op Operation, result interface{}) error {
 
 func (c *Client) SetConfigurationRequest(op interface{}, result interface{}) error {
 	e := ErrorResponse{}
-	fmt.Println(op)
 	req := c.HttpClient.NewRequest().SetBody(op).SetError(&e)
 
 	if result != nil {
