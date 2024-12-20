@@ -3,6 +3,7 @@ package harperdb
 import (
 	"encoding/json"
 	"errors"
+	"strings"
 	"time"
 )
 
@@ -37,150 +38,217 @@ type S3Credentials struct {
 
 type SysInfo struct {
 	System struct {
-		Platform    string `json:"platform"`
-		Distro      string `json:"distro"`
-		Release     string `json:"release"`
-		Codename    string `json:"codename"`
-		Kernel      string `json:"kernel"`
-		Arch        string `json:"arch"`
-		Hostname    string `json:"hostname"`
-		NodeVersion string `json:"node_version"`
-		NPMVersion  string `json:"npm_version"`
-	} `json:"system"`
+		Platform    string `json:"platform,omitempty"`
+		Distro      string `json:"distro,omitempty"`
+		Release     string `json:"release,omitempty"`
+		Codename    string `json:"codename,omitempty"`
+		Kernel      string `json:"kernel,omitempty"`
+		Arch        string `json:"arch,omitempty"`
+		Hostname    string `json:"hostname,omitempty"`
+		NodeVersion string `json:"node_version,omitempty"`
+		NPMVersion  string `json:"npm_version,omitempty"`
+	} `json:"system,omitempty"`
 	Time struct {
-		Current      Timestamp `json:"current"`
-		Uptime       float64   `json:"uptime"`
-		Timezone     string    `json:"timezone"`
-		TimezoneName string    `json:"timezoneName"`
-	} `json:"time"`
+		Current      Timestamp `json:"current,omitempty"`
+		Uptime       float64   `json:"uptime,omitempty"`
+		Timezone     string    `json:"timezone,omitempty"`
+		TimezoneName string    `json:"timezoneName,omitempty"`
+	} `json:"time,omitempty"`
 	CPU struct {
-		Manufacturer  string  `json:"manufacturer"`
-		Brand         string  `json:"brand"`
-		Vendor        string  `json:"vendor"`
-		Speed         float64 `json:"speed"`
-		Cores         int     `json:"cores"`
-		PhysicalCores int     `json:"physicalCores"`
-		Processors    int     `json:"processors"`
+		Manufacturer  string  `json:"manufacturer,omitempty"`
+		Brand         string  `json:"brand,omitempty"`
+		Vendor        string  `json:"vendor,omitempty"`
+		Speed         float64 `json:"speed,omitempty"`
+		Cores         int     `json:"cores,omitempty"`
+		PhysicalCores int     `json:"physicalCores,omitempty"`
+		Processors    int     `json:"processors,omitempty"`
 		CPUSpeed      struct {
-			Min   float64   `json:"min"`
-			Max   float64   `json:"max"`
-			Avg   float64   `json:"avg"`
-			Cores []float64 `json:"cores"`
-		} `json:"cpu_speed"`
+			Min   float64   `json:"min,omitempty"`
+			Max   float64   `json:"max,omitempty"`
+			Avg   float64   `json:"avg,omitempty"`
+			Cores []float64 `json:"cores,omitempty"`
+		} `json:"cpu_speed,omitempty"`
 		CurrentLoad struct {
-			AvgLoad           float64 `json:"avgload"`
-			CurrentLoad       float64 `json:"currentload"`
-			CurrentLoadUser   float64 `json:"currentload_user"`
-			CurrentLoadSystem float64 `json:"currentload_system"`
-			CurrentLoadNice   float64 `json:"currentload_nice"`
-			CurrentLoadIdle   float64 `json:"currentload_idle"`
-			CurrentLoadIRQ    float64 `json:"currentload_irq"`
-		} `json:"current_load"`
-		CPUs []CPULoad `json:"cpus"`
-	} `json:"cpu"`
+			AvgLoad           float64 `json:"avgload,omitempty"`
+			CurrentLoad       float64 `json:"currentload,omitempty"`
+			CurrentLoadUser   float64 `json:"currentload_user,omitempty"`
+			CurrentLoadSystem float64 `json:"currentload_system,omitempty"`
+			CurrentLoadNice   float64 `json:"currentload_nice,omitempty"`
+			CurrentLoadIdle   float64 `json:"currentload_idle,omitempty"`
+			CurrentLoadIRQ    float64 `json:"currentload_irq,omitempty"`
+		} `json:"current_load,omitempty"`
+		CPUs []CPULoad `json:"cpus,omitempty"`
+	} `json:"cpu,omitempty"`
 	Memory struct {
-		Total     int64 `json:"total"`
-		Free      int64 `json:"free"`
-		Used      int64 `json:"used"`
-		Active    int64 `json:"active"`
-		Available int64 `json:"available"`
-		SwapTotal int64 `json:"swaptotal"`
-		SwapUsed  int64 `json:"swapused"`
-		SwapFree  int64 `json:"swapfree"`
-	} `json:"memory"`
+		Total     int64 `json:"total,omitempty"`
+		Free      int64 `json:"free,omitempty"`
+		Used      int64 `json:"used,omitempty"`
+		Active    int64 `json:"active,omitempty"`
+		Available int64 `json:"available,omitempty"`
+		SwapTotal int64 `json:"swaptotal,omitempty"`
+		SwapUsed  int64 `json:"swapused,omitempty"`
+		SwapFree  int64 `json:"swapfree,omitempty"`
+	} `json:"memory,omitempty"`
 	Disk struct {
 		IO struct {
-			RIO int64 `json:"rIO"`
-			WIO int64 `json:"wIO"`
-			TIO int64 `json:"tIO"`
-		} `json:"io"`
+			RIO int64 `json:"rIO,omitempty"`
+			WIO int64 `json:"wIO,omitempty"`
+			TIO int64 `json:"tIO,omitempty"`
+		} `json:"io,omitempty"`
 		ReadWrite struct {
-			RX int64 `json:"rx"`
-			WX int64 `json:"wx"`
-			TX int64 `json:"tx"`
-			MS int64 `json:"ms"`
-		} `json:"read_write"`
-		Size []DiskSize `json:"size"`
-	} `json:"disk"`
+			RX int64 `json:"rx,omitempty"`
+			WX int64 `json:"wx,omitempty"`
+			TX int64 `json:"tx,omitempty"`
+			MS int64 `json:"ms,omitempty"`
+		} `json:"read_write,omitempty"`
+		Size []DiskSize `json:"size,omitempty"`
+	} `json:"disk,omitempty"`
 	Network struct {
-		DefaultInterface string `json:"default_interface"`
+		DefaultInterface string `json:"default_interface,omitempty"`
 		Latency          struct {
-			URL    string `json:"url"`
-			Ok     bool   `json:"ok"`
-			Status int64  `json:"status"`
-			MS     int64  `json:"ms"`
-		} `json:"latency"`
-		Interfaces  []NetworkInterface  `json:"interfaces"`
-		Stats       []NetworkStats      `json:"stats"`
-		Connections []NetworkConnection `json:"connections"`
-	} `json:"network"`
+			URL    string `json:"url,omitempty"`
+			Ok     bool   `json:"ok,omitempty"`
+			Status int64  `json:"status,omitempty"`
+			MS     int64  `json:"ms,omitempty"`
+		} `json:"latency,omitempty"`
+		Interfaces  []NetworkInterface  `json:"interfaces,omitempty"`
+		Stats       []NetworkStats      `json:"stats,omitempty"`
+		Connections []NetworkConnection `json:"connections,omitempty"`
+	} `json:"network,omitempty"`
 	HarperDBProcesses struct {
-		Core       interface{} `json:"core"`       // TODO Unknown
-		Clustering interface{} `json:"clustering"` // TODO Unknown
-	} `json:"harperdb_processes"`
-	TableSize []TableSize `json:"table_size"`
+		Core       []HDBProcess `json:"core,omitempty"`
+		Clustering []HDBProcess `json:"clustering,omitempty"`
+	} `json:"harperdb_processes,omitempty"`
+	TableSize   []TableSize      `json:"table_size,omitempty"`
+	Replication []NATSStreamInfo `json:"replication,omitempty"`
+	Threads     []Thread         `json:"threads,omitempty"`
 }
 
 type CPULoad struct {
-	Load       float64 `json:"load"`
-	LoadUser   float64 `json:"load_user"`
-	LoadSystem float64 `json:"load_system"`
-	LoadNice   float64 `json:"load_nice"`
-	LoadIdle   float64 `json:"load_idle"`
-	LoadIRQ    float64 `json:"load_irq"`
+	Load       float64 `json:"load,omitempty"`
+	LoadUser   float64 `json:"load_user,omitempty"`
+	LoadSystem float64 `json:"load_system,omitempty"`
+	LoadNice   float64 `json:"load_nice,omitempty"`
+	LoadIdle   float64 `json:"load_idle,omitempty"`
+	LoadIRQ    float64 `json:"load_irq,omitempty"`
 }
 
 type DiskSize struct {
-	FS    string  `json:"fs"`
-	Type  string  `json:"overlay"`
-	Size  int64   `json:"size"`
-	Used  int64   `json:"used"`
-	Use   float64 `json:"use"`
-	Mount string  `json:"mount"`
+	FS    string  `json:"fs,omitempty"`
+	Type  string  `json:"overlay,omitempty"`
+	Size  int64   `json:"size,omitempty"`
+	Used  int64   `json:"used,omitempty"`
+	Use   float64 `json:"use,omitempty"`
+	Mount string  `json:"mount,omitempty"`
 }
 
 type NetworkInterface struct {
-	Iface          string  `json:"iface"`
-	IfaceName      string  `json:"ifaceName"`
-	IP4            string  `json:"ip4"`
-	IP6            string  `json:"ip6"`
-	Mac            string  `json:"mac"`
-	OperState      string  `json:"operstate"`
-	Type           string  `json:"virtual"`
-	Duplex         string  `json:"duplex"`
-	Speed          float64 `json:"speed"`
-	CarrierChanges int64   `json:"carrierChanges"`
+	Iface          string  `json:"iface,omitempty"`
+	IfaceName      string  `json:"ifaceName,omitempty"`
+	IP4            string  `json:"ip4,omitempty"`
+	IP6            string  `json:"ip6,omitempty"`
+	Mac            string  `json:"mac,omitempty"`
+	OperState      string  `json:"operstate,omitempty"`
+	Type           string  `json:"virtual,omitempty"`
+	Duplex         string  `json:"duplex,omitempty"`
+	Speed          float64 `json:"speed,omitempty"`
+	CarrierChanges int64   `json:"carrierChanges,omitempty"`
 }
 
 type NetworkStats struct {
-	Iface     string `json:"iface"`
-	OperState string `json:"operstate"`
-	RxBytes   int64  `json:"rx_bytes"`
-	RxDropped int64  `json:"rx_dropped"`
-	RxErrors  int64  `json:"rx_errors"`
-	TxBytes   int64  `json:"tx_bytes"`
-	TxDropped int64  `json:"tx_dropped"`
-	TxErrors  int64  `json:"tx_errors"`
+	Iface     string `json:"iface,omitempty"`
+	OperState string `json:"operstate,omitempty"`
+	RxBytes   int64  `json:"rx_bytes,omitempty"`
+	RxDropped int64  `json:"rx_dropped,omitempty"`
+	RxErrors  int64  `json:"rx_errors,omitempty"`
+	TxBytes   int64  `json:"tx_bytes,omitempty"`
+	TxDropped int64  `json:"tx_dropped,omitempty"`
+	TxErrors  int64  `json:"tx_errors,omitempty"`
 }
 
 type NetworkConnection struct {
-	Protocol     string `json:"protocol"`
-	LocalAddress string `json:"localaddress"`
-	LocalPort    string `json:"localport"`
-	PeerAddress  string `json:"peeraddress"`
-	PeerPort     string `json:"peerport"`
-	State        string `json:"state"`
-	PID          int64  `json:"pid"`
-	Process      string `json:"node"`
+	Protocol     string `json:"protocol,omitempty"`
+	LocalAddress string `json:"localaddress,omitempty"`
+	LocalPort    string `json:"localport,omitempty"`
+	PeerAddress  string `json:"peeraddress,omitempty"`
+	PeerPort     string `json:"peerport,omitempty"`
+	State        string `json:"state,omitempty"`
+	PID          int64  `json:"pid,omitempty"`
+	Process      string `json:"node,omitempty"`
+}
+
+type HDBProcess struct {
+	PID       int64          `json:"pid,omitempty"`
+	ParentPID int64          `json:"parentPid,omitempty"`
+	Name      string         `json:"name,omitempty"`
+	CPU       float64        `json:"cpu,omitempty"`
+	CPUUser   float64        `json:"cpuu,omitempty"`
+	CPUSystem float64        `json:"cpus,omitempty"`
+	Memory    float64        `json:"mem,omitempty"`
+	Priority  int64          `json:"priority,omitempty"`
+	MemVsz    int64          `json:"memVsz,omitempty"`
+	MemRSS    int64          `json:"memRss,omitempty"`
+	Nice      int64          `json:"nice,omitempty"`
+	Started   ProcessStarted `json:"started,omitempty"`
+	State     string         `json:"state,omitempty"`
+	TTY       string         `json:"tty,omitempty"`
+	User      string         `json:"user,omitempty"`
+	Command   string         `json:"command,omitempty"`
+	Params    string         `json:"params,omitempty"`
+	Path      string         `json:"path,omitempty"`
+}
+
+type ProcessStarted time.Time
+
+// UnmarshalJSON for ProcessStarted values parses date-times that look like
+// "YYYY-MM-DD HH:mm:ss" into time.Time values
+func (ps *ProcessStarted) UnmarshalJSON(b []byte) error {
+	s := strings.Trim(string(b), `"`)
+	t, err := time.Parse(time.DateTime, s)
+	if err != nil {
+		return err
+	}
+	*ps = ProcessStarted(t)
+	return nil
 }
 
 type TableSize struct {
-	Schema                    string `json:"schema"`
-	Table                     string `json:"table"`
-	TableSize                 int64  `json:"table_size"`
-	RecordCount               int64  `json:"record_count"`
-	TransactionLogSize        int64  `json:"transaction_log_size"`
-	TransactionLogRecordCount int64  `json:"transaction_log_record_count"`
+	Schema                    string `json:"schema,omitempty"`
+	Table                     string `json:"table,omitempty"`
+	TableSize                 int64  `json:"table_size,omitempty"`
+	RecordCount               int64  `json:"record_count,omitempty"`
+	TransactionLogSize        int64  `json:"transaction_log_size,omitempty"`
+	TransactionLogRecordCount int64  `json:"transaction_log_record_count,omitempty"`
+}
+
+type NATSStreamInfo struct {
+	StreamName string     `json:"stream_name,omitempty"`
+	Database   string     `json:"database,omitempty"`
+	Table      string     `json:"table,omitempty"`
+	State      string     `json:"state,omitempty"`
+	Consumers  []Consumer `json:"consumers,omitempty"`
+}
+
+type Consumer struct {
+	Name           string    `json:"name,omitempty"`
+	Created        time.Time `json:"created,omitempty"`
+	NumAckPending  int64     `json:"num_ack_pending,omitempty"`
+	NumRedelivered int64     `json:"num_redelivered,omitempty"`
+	NumWaiting     int64     `json:"num_waiting,omitempty"`
+	NumPending     int64     `json:"num_pending,omitempty"`
+}
+
+type Thread struct {
+	ThreadID        int64   `json:"threadId,omitempty"`
+	Name            string  `json:"name,omitempty"`
+	HeapTotal       int64   `json:"heapTotal,omitempty"`
+	HeapUsed        int64   `json:"heapUsed,omitempty"`
+	ExternalMemory  int64   `json:"externalMemory,omitempty"`
+	ArrayBuffers    int64   `json:"arrayBuffers,omitempty"`
+	SinceLastUpdate int64   `json:"sinceLastUpdate,omitempty"`
+	Idle            float64 `json:"idle,omitempty"`
+	Active          float64 `json:"active,omitempty"`
+	Utilization     float64 `json:"utilization,omitempty"`
 }
 
 func (c *Client) ExportLocal(format, path string, searchOperation SearchOperation) error {
@@ -213,10 +281,19 @@ func (c *Client) ImportFromS3(action, database, table string, s3creds S3Credenti
 	return &result, err
 }
 
-func (c *Client) SystemInformation() (*SysInfo, error) {
+func (c *Client) SystemInformationAll() (*SysInfo, error) {
 	var sysInfo SysInfo
 	err := c.opRequest(operation{
 		Operation: OP_SYSTEM_INFORMATION,
+	}, &sysInfo)
+	return &sysInfo, err
+}
+
+func (c *Client) SystemInformation(attrs []string) (*SysInfo, error) {
+	var sysInfo SysInfo
+	err := c.opRequest(operation{
+		Operation:  OP_SYSTEM_INFORMATION,
+		Attributes: attrs,
 	}, &sysInfo)
 	return &sysInfo, err
 }

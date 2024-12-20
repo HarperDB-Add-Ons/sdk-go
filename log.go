@@ -62,7 +62,7 @@ func (c *Client) ReadHarperDBLog(limit, start int, from, until time.Time, order 
 // Use LogSearchType* constants to filter the log entries by searchValues,
 // which should be an array/slice of searchType.
 // Leave searchType empty (LogSearchTypeAll) to get all entries.
-func (c Client) ReadTransactionLog(schema, table, searchType string, searchValues interface{}) ([]TxLogEntry, error) {
+func (c *Client) ReadTransactionLog(schema, table, searchType string, searchValues interface{}) ([]TxLogEntry, error) {
 	var result []TxLogEntry
 	err := c.opRequest(operation{
 		Operation:    OP_READ_TRANSACTION_LOG,
@@ -88,7 +88,7 @@ func (c *Client) ReadAuditLog(schema, table string, searchType string, searchVal
 	return result, err
 }
 
-func (c Client) DeleteTransactionLogsBefore(schema, table string, timestamp time.Time) error {
+func (c *Client) DeleteTransactionLogsBefore(schema, table string, timestamp time.Time) error {
 	return c.opRequest(operation{
 		Operation: OP_DELETE_TRANSACTION_LOG,
 		Schema:    schema,
