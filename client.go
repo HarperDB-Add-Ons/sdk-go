@@ -2,6 +2,7 @@ package harperdb
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -74,6 +75,36 @@ func (c *Client) SetConfigurationRequest(op interface{}, result interface{}) err
 		return &OperationError{
 			StatusCode: resp.StatusCode(),
 			Message:    string(resp.Body())}
+	}
+
+	return nil
+}
+
+// Healthcheck does a GET request against the /health endpoint of the
+// configured HarperDB server and returns an error if it gets a non-200
+// status, nil otherwise.
+func (c *Client) Healthcheck() error {
+	e := ErrorResponse{}
+
+	healthCheckURL, err := url.JoinPath(c.endpoint, "health")
+	if err != nil {
+		return fmt.Errorf("invalid healthcheck URL: '%w'", err)
+	}
+
+	req := c.HttpClient.NewRequest().SetError(&e)
+
+	resp, err := req.Get(healthCheckURL)
+	if err != nil {
+		return &OperationError{
+			StatusCode: resp.StatusCode(),
+			Message:    err.Error(),
+		}
+	}
+	if resp.StatusCode() > 399 {
+		return &OperationError{
+			StatusCode: resp.StatusCode(),
+			Message:    string(resp.Body()),
+		}
 	}
 
 	return nil
