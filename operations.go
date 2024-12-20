@@ -229,6 +229,7 @@ type operation struct {
 	Action          string                       `json:"action,omitempty"`
 	Active          *bool                        `json:"active,omitempty"`
 	Attribute       string                       `json:"attribute,omitempty"`
+	Attributes      []string                     `json:"attributes,omitempty"`
 	Conditions      []SearchCondition            `json:"conditions,omitempty"`
 	Connections     []ConfigureClusterConnection `json:"connections,omitempty"`
 	Company         string                       `json:"company,omitempty"`
